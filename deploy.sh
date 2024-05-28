@@ -2,13 +2,23 @@
 
 set -e
 
+# Function to wait for the lock to be released
+wait_for_lock() {
+  while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+    echo "Waiting for other package manager to finish..."
+    sleep 5
+  done
+}
+
 # Update and install necessary packages
+wait_for_lock
 sudo apt update
+wait_for_lock
 sudo apt install -y docker.io docker-compose nginx openssl git
 
 # Clone the repository
 if [ ! -d /var/www/my_flask_app ]; then
-  git clone https://github.com/yourusername/my_flask_app.git /var/www/my_flask_app
+  git clone https://github.com/Beknazar007/third-task-for-diploma.git /var/www/my_flask_app
 fi
 
 # Navigate to the application directory
